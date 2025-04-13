@@ -25,6 +25,10 @@ const gostaDeLeao = true
 const estado = reactive({
   contador: 0,
   email: '',
+  Saldo: 5000,
+  Transferindo: 0,
+  nomes: [],
+  nomeAInserir: '',
 })
 
 function incrementar() {
@@ -37,6 +41,27 @@ function decrementar() {
 
 function alteraEmail(evento){
   estado.email = evento.target.value
+}
+
+function mostrarSaldoFuturo(){
+  // Desestruturação de objetos, ao inves de colocar o estado.saldo, coloca o {{{saldo}}} = estado 
+  const { Saldo, Transferindo} = estado
+  return Saldo - Transferindo
+}
+
+function validaValor(){
+  const { Saldo, Transferindo} = estado
+  return Saldo > Transferindo
+}
+
+
+
+function cadastrarNome(){
+  if(estado.nomeAInserir.length >= 3){
+    estado.nomes.push(estado.nomeAInserir);
+  }else{
+    alert('Digite mais caracteres')
+  }  
 }
 
 </script>
@@ -65,11 +90,34 @@ function alteraEmail(evento){
 
 {{ estado.email }}
 <input type= "email" @keyup="alteraEmail">
+
+<br />
+<hr />
+  Saldo: {{ estado.Saldo }} <br>
+  Transferindo: {{ estado.Transferindo }} <br>
+  Saldo depois da transferência: {{ mostrarSaldoFuturo() }}<br>
+  <input :class="{ invalido: !validaValor() }" @keyup="evento => estado.Transferindo = evento.target.value" type="number" placeholder="Quantia para transferir">
+
+
+<br>
+<hr />
+<input type="text" @keyup="evento => estado.nomeAInserir = evento.target.value">
+<button type="button" @click="cadastrarNome">Cadastrar Nome</button>
+<ul>
+  <li v-for="nome in estado.nomes">{{ nome }}</li>
+</ul>
+
+<h3 v-for="nome in estado.nomes">{{ nome }}</h3>
 </template>
 
 <style scoped>
 /* Style -> Nossa estrutrura de desing */
 img{
   width: 200px;
+}
+
+.invalido{
+  outline-color: red;
+  border-color: red;
 }
 </style>
